@@ -1,6 +1,11 @@
 // global variables
 let atomWidth = 10;
 let currentState = [];
+let rootState = [];
+let startingPosition = 5;
+let floatingPosition = 0;
+
+let previousPositions = [];
 // Shapes Definitions
 // L 
 const lShapes = [
@@ -10,10 +15,7 @@ const lShapes = [
     [atomWidth, atomWidth*2, atomWidth*2 +1, atomWidth*2 + 2]
 ] 
 
-
-
-document.addEventListener("DOMContentLoaded",() => {
-    console.log("work");
+document.addEventListener("DOMContentLoaded",() => { 
     var gridElement = document.getElementById("grid");
      
     for(var i = 0; i < 200; i++){
@@ -22,12 +24,32 @@ document.addEventListener("DOMContentLoaded",() => {
         atomBox.className = `atom-box`;
         gridElement.appendChild(atomBox)
         atomBox.innerText = `${i}`;
-        currentState.push(atomBox);
+        rootState.push(atomBox);
+    } 
+});
+
+const cleanup = (indexes) => {
+    indexes.forEach(index => { 
+        rootState[index].className = "atom-box" 
+    });
+    previousPositions = [];
+};
+
+const draw = () => {
+    if(previousPositions.length > 0){  
+        cleanup(previousPositions)
     }
 
-    console.log(currentState);
-    lShapes[2].forEach(index => {
-        console.log(index);
-        currentState[index].className = "atom-box tetromino"
-    }) 
-});
+    lShapes[2].forEach(index => { 
+        rootState[startingPosition+ index + atomWidth*floatingPosition ].className = "atom-box tetromino"
+        previousPositions.push(startingPosition+ index + atomWidth*floatingPosition);
+    });
+} 
+
+
+
+setInterval(() => { 
+    floatingPosition++
+    draw();
+}, 1000);
+

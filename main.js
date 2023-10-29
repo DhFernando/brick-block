@@ -3,7 +3,7 @@ let atomWidth = 10;
 let currentState = [];
 let rootState = [];
 let startingPosition = 5;
-let floatingPosition = 0;
+let flowingDown = 0;
 
 let previousPositions = [];
 // Shapes Definitions
@@ -36,20 +36,35 @@ const cleanup = (indexes) => {
 };
 
 const draw = () => {
-    if(previousPositions.length > 0){  
-        cleanup(previousPositions)
+    try{
+        if(previousPositions.length > 0){  
+            cleanup(previousPositions)
+        }
+    
+        lShapes[2].forEach(index => { 
+            rootState[startingPosition+ index + atomWidth*flowingDown ].className = "atom-box tetromino"
+            previousPositions.push(startingPosition+ index + atomWidth*flowingDown);
+        });
+    }catch(e){
+        previousPositions = []
+        clearInterval(runShapes)
     }
-
-    lShapes[2].forEach(index => { 
-        rootState[startingPosition+ index + atomWidth*floatingPosition ].className = "atom-box tetromino"
-        previousPositions.push(startingPosition+ index + atomWidth*floatingPosition);
-    });
 } 
 
-
-
-setInterval(() => { 
-    floatingPosition++
+const runShapes = setInterval(() => { 
+    flowingDown =flowingDown + 2
     draw();
 }, 1000);
+
+
+// moving shape left and right
+document.addEventListener("keydown", (e)=>{
+    console.log(e.keyCode)
+    if(e.keyCode === 39){
+        startingPosition++;
+    }
+    if(e.keyCode === 37){
+        startingPosition--;
+    }
+})
 

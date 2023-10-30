@@ -36,7 +36,7 @@ const cleanup = (indexes) => {
 
 const isMovable = (shape) => {
     for (const index of shape) {
-        if(!currentState[startingPosition+ index + atomWidth*flowingDown]){
+        if(!currentState[startingPosition + index + atomWidth*flowingDown]){
             return false
          }
     } 
@@ -57,8 +57,10 @@ const draw = () => {
             }); 
         }else {
             previousPositions = []
-            clearInterval(runShapes)
+            flowingDown = 0
         } 
+
+         
         
     }catch(e){
         previousPositions = []
@@ -69,7 +71,7 @@ const draw = () => {
 const runShapes = setInterval(() => { 
     flowingDown =flowingDown + 1
     draw();
-}, 100);
+}, 1000);
 
 
 // moving shape left and right

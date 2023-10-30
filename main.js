@@ -1,7 +1,6 @@
 // global variables
-let atomWidth = 10;
+let atomWidth = 10; 
 let currentState = [];
-let rootState = [];
 let startingPosition = 5;
 let flowingDown = 0;
 
@@ -23,28 +22,44 @@ document.addEventListener("DOMContentLoaded",() => {
         atomBox.id = `atom-box-${i+1}`;
         atomBox.className = `atom-box`;
         gridElement.appendChild(atomBox)
-        atomBox.innerText = `${i}`;
-        rootState.push(atomBox);
+        // atomBox.innerText = `${i}`;
+        currentState.push(atomBox);
     } 
 });
 
 const cleanup = (indexes) => {
     indexes.forEach(index => { 
-        rootState[index].className = "atom-box" 
+        currentState[index].className = "atom-box" 
     });
     previousPositions = [];
 };
 
+const isMovable = (shape) => {
+    for (const index of shape) {
+        if(!currentState[startingPosition+ index + atomWidth*flowingDown]){
+            return false
+         }
+    } 
+    return true;
+};
+
 const draw = () => {
-    try{
-        if(previousPositions.length > 0){  
+    try{ 
+        let _isMovable = isMovable(lShapes[2]);
+        if(previousPositions.length > 0 && _isMovable){  
             cleanup(previousPositions)
-        }
-    
-        lShapes[2].forEach(index => { 
-            rootState[startingPosition+ index + atomWidth*flowingDown ].className = "atom-box tetromino"
-            previousPositions.push(startingPosition+ index + atomWidth*flowingDown);
-        });
+        } 
+
+        if(_isMovable){
+            lShapes[2].forEach(index => {  
+                currentState[startingPosition+ index + atomWidth*flowingDown].className = "atom-box tetromino"
+                previousPositions.push(startingPosition+ index + atomWidth*flowingDown); 
+            }); 
+        }else {
+            previousPositions = []
+            clearInterval(runShapes)
+        } 
+        
     }catch(e){
         previousPositions = []
         clearInterval(runShapes)
@@ -52,9 +67,9 @@ const draw = () => {
 } 
 
 const runShapes = setInterval(() => { 
-    flowingDown =flowingDown + 2
+    flowingDown =flowingDown + 1
     draw();
-}, 1000);
+}, 100);
 
 
 // moving shape left and right

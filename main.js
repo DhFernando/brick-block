@@ -3,6 +3,7 @@ let atomWidth = 10;
 let currentState = [];
 let startingPosition = 5;
 let flowingDown = 0;
+let totalPoints = 0;
 
 let previousPositions = [];
 // Shapes Definitions
@@ -32,7 +33,8 @@ document.addEventListener("DOMContentLoaded",() => {
 
 const cleanup = (indexes) => {
     indexes.forEach(index => { 
-        currentState[index].atomBox.className = "atom-box" 
+        currentState[index].atomBox.className = "atom-box" ,
+        currentState[index].availableAtom = true;
     });
     previousPositions = [];
 };
@@ -49,6 +51,21 @@ const isMovable = (shape) => {
     return true;
 };
 
+const checkPoints = () => {
+    // if there are 10 unavailable atomes means one point
+    let tempAvailabilityStateOfAtoms = [];
+    currentState.forEach((el, n) => { 
+        tempAvailabilityStateOfAtoms.push(el.availableAtom);
+        if(tempAvailabilityStateOfAtoms.length === 10){
+            if(tempAvailabilityStateOfAtoms.every(_el => _el === false)){
+                totalPoints ++; 
+                cleanup(Array.from({ length: Math.min(10, n + 1) }, (_, i) => n - i));
+            } 
+            tempAvailabilityStateOfAtoms = [];
+        }
+    });
+};
+
 const draw = () => {
     try{ 
         let _isMovable = isMovable(lShapes[2]);
@@ -60,13 +77,17 @@ const draw = () => {
             lShapes[2].forEach(index => {  
                 currentState[startingPosition+ index + atomWidth*flowingDown].atomBox.className = "atom-box tetromino"
                 previousPositions.push(startingPosition+ index + atomWidth*flowingDown); 
-            }); 
+            });
+
+            
         }else {
             previousPositions.forEach(i => {
                 currentState[i].availableAtom = false; 
             });
             previousPositions = []
             flowingDown = 0
+            // check is there any point
+            checkPoints();
         } 
     }catch(e){
         previousPositions = []

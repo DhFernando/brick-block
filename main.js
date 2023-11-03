@@ -23,21 +23,27 @@ document.addEventListener("DOMContentLoaded",() => {
         atomBox.className = `atom-box`;
         gridElement.appendChild(atomBox)
         // atomBox.innerText = `${i}`;
-        currentState.push(atomBox);
+        currentState.push({
+            atomBox,
+            availableAtom: true
+        });
     } 
 });
 
 const cleanup = (indexes) => {
     indexes.forEach(index => { 
-        currentState[index].className = "atom-box" 
+        currentState[index].atomBox.className = "atom-box" 
     });
     previousPositions = [];
 };
 
 const isMovable = (shape) => {
     for (const index of shape) {
-        if(!currentState[startingPosition + index + atomWidth*flowingDown]){
-            return false
+        var checkingCell = currentState[startingPosition + index + atomWidth*flowingDown]; 
+        if(!checkingCell){
+            return false;
+         }else if(!checkingCell.availableAtom) {
+            return false;
          }
     } 
     return true;
@@ -52,16 +58,16 @@ const draw = () => {
 
         if(_isMovable){
             lShapes[2].forEach(index => {  
-                currentState[startingPosition+ index + atomWidth*flowingDown].className = "atom-box tetromino"
+                currentState[startingPosition+ index + atomWidth*flowingDown].atomBox.className = "atom-box tetromino"
                 previousPositions.push(startingPosition+ index + atomWidth*flowingDown); 
             }); 
         }else {
+            previousPositions.forEach(i => {
+                currentState[i].availableAtom = false; 
+            });
             previousPositions = []
             flowingDown = 0
         } 
-
-         
-        
     }catch(e){
         previousPositions = []
         clearInterval(runShapes)
@@ -71,7 +77,7 @@ const draw = () => {
 const runShapes = setInterval(() => { 
     flowingDown =flowingDown + 1
     draw();
-}, 1000);
+}, 500);
 
 
 // moving shape left and right
